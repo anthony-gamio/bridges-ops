@@ -1,0 +1,26 @@
+<table class="display" id="tabla-materiales">
+    <thead>
+        <tr>
+            <th>Material</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for material in materiales %}
+        <tr>
+            <td>{{ material.nombre }}</td>
+            <td>
+                <!-- Botón para Asignar Ítems -->
+                <button type="button" class="btn-asignar-items" data-material-id="{{ material.id }}" data-material-nombre="{{ material.nombre }}">
+                    Asignar Ítems
+                </button>
+
+                <!-- Botón para Eliminar Material -->
+                <button type="button" class="btn-eliminar-material" data-material-id="{{ material.id }}">
+                    Eliminar
+                </button>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

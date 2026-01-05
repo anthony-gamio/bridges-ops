@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<!-- Incluye jQuery (necesario para DataTables) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- DataTables CSS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+<!-- DataTables JS -->
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Actividades del Retiro</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f4f4; }
+        nav { background-color: #333; overflow: hidden; padding: 10px; }
+        nav a { color: white; padding: 14px 20px; text-decoration: none; float: left; }
+        nav a:hover { background-color: #ddd; color: black; }
+        h2 { margin-top: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; background-color: white; }
+        th, td { padding: 12px; border: 1px solid #ddd; text-align: left; }
+        th { background-color: #f2f2f2; }
+        tr:nth-child(even) { background-color: #f9f9f9; }
+        button {
+            background-color: #28a745;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        button:hover { background-color: #218838; }
+        #filtros-container {
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        }
+
+        #filtros-container label {
+        margin-right: 10px;
+        font-weight: bold;
+        }
+
+        #filtros-container select {
+        padding: 5px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>
+        <!--<img src="{{ url_for('static', filename='.png') }}" alt="Logo" class="logo-img">-->
+        Logística Emaús
+    </h1>
+<nav>
+    <a href="{{ url_for('index') }}">Inventario</a>
+    <a href="{{ url_for('actividades') }}">Actividades</a>
+    <a href="{{ url_for('areas') }}">Areas</a>
+    <a href="{{ url_for('requerimientos') }}">Requerimientos</a>
+</nav>
+
+<h2>Actividades</h2>
+
+<form action="{{ url_for('actualizar_actividades') }}" method="post">
+    <div id="filtros-container" style="margin-bottom: 15px;">
+        <label for="filtro-dia">Día:</label>
+        <select id="filtro-dia">
+            <option value="">Todos los días</option>
+        </select>
+    
+        <label for="filtro-grupo" style="margin-left: 20px;">Grupo Función:</label>
+        <select id="filtro-grupo">
+            <option value="">Todos los grupos</option>
+        </select>
+    </div>
+
+    <table id="actividadesTabla" class="display">
+        <thead>
+            <tr>
+                <th>Día</th>
+                <th>Actividad</th>
+                <th>Grupo Función</th>
+                <th>Completado</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for actividad in actividades %}
+            <tr>
+                <td>{{ actividad['Día'] }}</td>
+                <td>{{ actividad['Actividad'] }}</td>
+                <td>{{ actividad['Grupo Función'] }}</td>
+                <td>
+                    <input type="checkbox" name="completado_{{ loop.index0 }}" {% if actividad['Estado'] %}checked{% endif %}>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <button type="submit">Guardar Cambios</button>
+</form>
+
+<script>
+    $(document).ready(function() {
+        var table = $('#actividadesTabla').DataTable({
+            "order": [[0, 'asc']],    // Ordenar por Día ascendente
+            "paging": false,          // Desactivar paginación
+            "searching": true,        // Mantener la barra de búsqueda general
+            "ordering": false,        // Desactivar la ordenación manual
+            "language": {
+                "search": "Buscar:",
+                "lengthMenu": "Mostrar _MENU_ registros por página",
+                "info": "Mostrando _START_ a _END_ de _TOTAL_ registros",
+                "paginate": {
+                    "first": "Primero",
+                    "last": "Último",
+                    "next": "Siguiente",
+                    "previous": "Anterior"
+                }
+            }
+        });
+
+        // Llenar el filtro de Días
+        var diasUnicos = table.column(0).data().unique().sort();
+        diasUnicos.each(function(dia) {
+            if (dia) {
+                $('#filtro-dia').append('<option value="' + dia + '">' + dia + '</option>');
+            }
+        });
+
+        // Llenar el filtro de Grupos de Función
+        var gruposUnicos = table.column(2).data().unique().sort();
+        gruposUnicos.each(function(grupo) {
+            if (grupo) {
+                $('#filtro-grupo').append('<option value="' + grupo + '">' + grupo + '</option>');
+            }
+        });
+
+        // Evento para filtrar por Día
+        $('#filtro-dia').on('change', function() {
+            var filtroDia = $(this).val();
+            table.column(0).search(filtroDia).draw();
+        });
+
+        // Evento para filtrar por Grupo de Función
+        $('#filtro-grupo').on('change', function() {
+            var filtroGrupo = $(this).val();
+            table.column(2).search(filtroGrupo).draw();
+        });
+    });
+</script>
+
+
+</body>
+</html>

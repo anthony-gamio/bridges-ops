@@ -1,0 +1,3 @@
+[console_scripts]
+render-cli=render_cli.console:cli
+

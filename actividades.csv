@@ -1,0 +1,117 @@
+﻿Día,Actividad,Grupo Función,Estado
+Jueves,Oración Inicial,,True
+Jueves,Ambientación de sala,,False
+Jueves,Definición Circuito Pared-Confesiones-Lavado de manos,,True
+Jueves,Prueba de sonido sala,,False
+Jueves,Prueba de sonido patio / pared,,True
+Jueves,Llaves y revisión de habitaciones,,False
+Jueves,Instalación de Tachos y útiles de limpieza,,True
+Jueves,Fotochecks+Bolsas de celulares,,False
+Jueves,Instalación Snacks,,True
+Jueves,Pre instalación de Santísimo,,False
+Jueves,Coordinación cocina (horarios) y distribución de mesas,,True
+Jueves,Asignacion servidores y caminantes / mesas y habitaciones,,False
+Jueves,Almuerzo,,True
+Jueves,Rol de vigilia,,False
+Jueves,Misa,,True
+Jueves,Bendición de Biblias mantelitos rosarios palanquitas etc,,False
+Jueves,Exposición del Sagrado Sacramento + iluminación+música,,True
+Jueves,Rezo del Santo Rosario (Misterios Gloriosos),,False
+Jueves,Organizar las mesas de registro,,True
+Viernes,Llegada equipo de bienvenida en la Parroquia NSR. Armar mesa de registro,,False
+Viernes,Embarque en el bus Parroquia . Salida hacia la Casa de Retiro,,True
+Viernes,Recepción en Casa de Retiro. Registro de asistencia. Asignación de habitaciones.,,False
+Viernes,Snack de liquidos,,True
+Viernes,Suena la campana para reunir a los Caminantes en el auditorio,,False
+Viernes,Bienvenida a los Caminantes en el auditorio / Confidencialidad,,True
+Viernes,Reglas de la Casa,,False
+Viernes,Pasar lista de los Caminantes asignarles mesa y traslado en orden al comedor,,True
+Viernes,Cena - Bendición de los alimentos y petición por los Caminantes y su retiro,,False
+Viernes,Aviso para ir baño en 5 min y posterior reunión en el auditorio,,True
+Viernes,Presentaciones,,False
+Viernes,Snack (LIQUIDOS y GALLETAS),Reparto de los diarios,True
+Viernes,Música y reflexión,Oración,False
+Viernes,Invitar a los caminantes a la capilla,Oración,True
+Viernes,Dinámica entrega de las biblias en la entrada a la capilla,Caminantes se dirigen a la capilla,False
+Viernes,1. Caminantes forman y entran de 2 - 2 y se bendicen el uno a otro con Agua Bendita,Caminantes se dirigen a la capilla,True
+Viernes,2.  Entrega de Biblias (separador en el pasaje de Emaús Lucas 24 :13-35),Caminantes se dirigen a la capilla,False
+Viernes,Explicación del Santísimo Sacramento.,Caminantes se dirigen a la capilla,True
+Viernes,1.Pedir que todos los caminantes se mantengan en silencio hasta que regresemos a la Capilla en la mañana siguiente,Caminantes se dirigen a la capilla,False
+Viernes,2.  Se comunica que la Capilla se mantendrá abierta toda la noche para el que quiera adorar el Santisimo Sacramento,Caminantes se dirigen a la capilla,True
+Viernes,Reunión de Servidores en auditorio,Caminantes se dirigen a la capilla,False
+Viernes,1. Confirmar mesas: ver si se conocen los caminantes,Caminantes se dirigen a la capilla,True
+Sábado,Diana. Toque de campana,,False
+Sábado,Servidores en la Capilla. Tomar precauciones. Respetar el silencio,,True
+Sábado,Caminantes en la Capilla - Oración de la Mañana,,False
+Sábado,El tiempo de silencio se termina,,True
+Sábado,Desayuno - Oración y bendición.,,False
+Sábado,Foto. Salen todos en orden según lista,,True
+Sábado,Baño 5min y luego reunión en auditorio,,False
+Sábado,Resumen de todas las actividades del viernes,,True
+Sábado,Música y Reflexión,,False
+Sábado,Música y reflexión,,True
+Sábado,Snack (LIQUIDOS GALLETAS Y FRUTA),,False
+Sábado,Música y reflexión,,True
+Sábado,Almuerzo - Oración y bendición,,False
+Sábado,Baño 5min y luego reunión en auditorio,,True
+Sábado,1. Entrega de chocolates/caramelos en la entrada,,False
+Sábado,Preparar sillas para dinámica,,True
+Sábado,Música y Reflexión,,False
+Sábado,Snack (LIQUIDOS y GALLETAS),,True
+Sábado,Música y reflexión,Entrega de rosarios,False
+Sábado,Cena - Oración y bendición de los alimentos,Entrega de rosarios,True
+Sábado,Baño 5min pedir que bajen ROPA DE ABRIGO y luego reunión en auditorio Entrega de rosarios,False
+Sábado,Preparar audio para la zona de quema de pecados,Entrega de rosarios,True
+Sábado,Encendido de fogata,Entrega de rosarios,False
+Sábado,Dinámica de la hoja de los pecados y quema de las cenizas,Entrega de rosarios,True
+Sábado,1. Se entrega a cada Caminante una hoja de papel,Entrega de rosarios,False
+Sábado,Preparar audio en capilla,Entrega de rosarios,True
+Sábado,Dinámica,Entrega de rosarios,False
+Sábado,Preparar mesa de snack para Sacerdotes,Oración,True
+Sábado,Snack (SOLO LIQUIDOS),Oración,False
+Sábado,Entrega de palancas.,Oración,True
+Sábado,SNACKS,Oración,False
+Sábado,Recepción caminantes en snacks,Oración,True
+Sábado,Entrega estipendios,Oración,False
+Sábado,Caminantes se dirigen a la capilla,Oración,True
+Sábado,Misa,Oración,False
+Sábado,Reparto sandwich a caminantes en la puerta de la iglesia,Oración,True
+Sábado,Levantamiento de los materiales de confesiones,,False
+Sábado,Reordenamiento de auditorio,,True
+Sábado,Reunión de Servidores en auditorio,,False
+Domingo,Diana. Toque de campana.,,True
+Domingo,Servidores en la Capilla. Tomar precauciones. Respetar el silencio,,False
+Domingo,Caminantes en la Capilla - Oración de la Mañana,,True
+Domingo,Resumen de todas las actividades del sábado,,False
+Domingo,Instrucciones para el desayuno. Donde sentarnos y no voltear los mantelitos,,True
+Domingo,Desayuno - Bendición de los alimentos,,False
+Domingo,Baño 5min y luego reunión en auditorio,,True
+Domingo,1. Recordar que tengan los maletines listos para bajarlos después de almuerzo,,False
+Domingo,Música y reflexión,,True
+Domingo,Snack (LIQUIDOS GALLETAS Y FRUTA),,False
+Domingo,Levantamiento de Santísimo,,True
+Domingo,Música y reflexión,,False
+Domingo,Dinámica,,True
+Domingo,3. Se entrega a cada Caminante una hoja de papel y sobre,,False
+Domingo,Preparar sillas para dinámica con bolsas para caminantes,,True
+Domingo,Baño 5min bajar maletines y luego reunión en auditorio,,False
+Domingo,Dinámica,,True
+Domingo,4.Líderes de mesa distribuyen las bolsas y todos se ponen sus polos blancos,,False
+Domingo,Levantamiento de materiales,,True
+Domingo,Material de confesiones,,False
+Domingo,Utiles de limpieza,,True
+Domingo,Snacks,,False
+Domingo,Equipos de sonido,,True
+Domingo,Banners,,False
+Domingo,Santísimo,,True
+Domingo,Recojo y entrega de llaves,,False
+Domingo,Reunión en el auditorio,,True
+Domingo,Recoger sillas dinámica de fuerza y apoyo,,False
+Domingo,Autobuses en la casa de retiro,,True
+Domingo,Cargar maletines en el autobus,,False
+Domingo,Embarque y salida hacia la Parroquia,,True
+Domingo,Reservar estacionamiento para el autobus en Parroquia,,False
+Domingo,Cartelitos de bancas de misa (reservado),,True
+Domingo,Recibir maletines,,False
+Domingo,Recepción y ordenamiento de caminantes para el ingreso,,True
+Domingo,Entrega de rosas rojas para los Caminantes en la Parroquia,,False

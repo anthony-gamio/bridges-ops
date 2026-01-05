@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestión de Áreas y Materiales</title>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f4f4; }
+        nav { background-color: #333; overflow: hidden; padding: 10px; }
+        nav a { color: white; padding: 14px 20px; text-decoration: none; float: left; }
+        nav a:hover { background-color: #ddd; color: black; }
+        h2 { margin-top: 20px; }
+        button {
+            background-color: #28a745;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        .section { margin-bottom: 30px; }
+        input, select { padding: 5px; margin-top: 5px; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+    <h1>Gestión de Áreas, Materiales e Ítems</h1>
+    <nav>
+        <a href="{{ url_for('index') }}">Inventario</a>
+        <!--<a href="{{ url_for('actividades') }}">Actividades</a>-->
+        <a href="{{ url_for('areas') }}">Solicitudes</a>
+        <a href="{{ url_for('requerimientos') }}">Consolidado</a>
+    </nav>
+    
+    <!-- SECCIÓN 1: ÁREAS -->
+    <div class="section" id="seccion-areas">
+        <h2>Áreas Responsables</h2>
+
+        <!-- Formulario para agregar un área -->
+        <form action="{{ url_for('agregar_area') }}" method="post">
+            <input type="text" name="nombre_area" placeholder="Nombre del Área" required>
+            <button type="submit">Agregar Área</button>
+        </form>
+
+        <!-- Tabla de Áreas -->
+        <table id="tabla-areas" class="display">
+            <thead>
+                <tr>
+                    <th>Área</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for area in areas %}
+                <tr data-area-id="{{ area.id }}">
+                    <td>{{ area.nombre }}</td>
+                    <td>
+                        <button class="btn-ver-materiales">Ver Materiales</button>
+                        <form action="{{ url_for('eliminar_area', area_id=area.id) }}" method="post" style="display:inline;">
+                            <button type="submit" onclick="return confirm('¿Estás seguro de eliminar esta área?');">Eliminar</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- SECCIÓN 2: MATERIALES (Se muestra al seleccionar un área) -->
+    <div class="section hidden" id="seccion-materiales">
+        <h2>Materiales de <span id="nombre-area-seleccionada"></span></h2>
+        <button onclick="volverAreas()">Volver a Áreas</button>
+        
+        <!-- Formulario para agregar material -->
+        <form id="form-agregar-material">
+            <input type="text" id="nombre_material" placeholder="Nombre del Material" required>
+            <input type="hidden" id="area_id">
+            <button type="submit">Agregar Material</button>
+        </form>
+
+        <!-- Lista de Materiales -->
+        <div id="lista-materiales"></div>
+    </div>
+
+    <!-- SECCIÓN 3: ASIGNACIÓN DE ÍTEMS (Se muestra al seleccionar un material) -->
+    <div class="section hidden" id="seccion-asignacion">
+        <h2>Asignar Ítems a <span id="nombre-material-seleccionado"></span></h2>
+        <button onclick="volverMateriales()">Volver a Materiales</button>
+
+        <!-- Aquí se cargará el formulario de asignación dinámicamente -->
+        <div id="form-asignar-items"></div>
+    </div>
+
+<script>
+    $(document).ready(function() {
+        $('#tabla-areas').DataTable();
+
+        // Mostrar materiales al hacer clic en "Ver Materiales"
+        $('.btn-ver-materiales').on('click', function() {
+            const areaId = $(this).closest('tr').data('area-id');
+            const areaNombre = $(this).closest('tr').find('td:first').text();
+
+            $('#nombre-area-seleccionada').text(areaNombre);
+            $('#area_id').val(areaId); 
+            $('#seccion-areas').addClass('hidden');
+            $('#seccion-materiales').removeClass('hidden');
+
+            cargarMateriales(areaId);
+        });
+
+        // Cargar materiales de un área
+        function cargarMateriales(areaId) {
+            $.get('/areas/' + areaId + '/materiales', function(data) {
+                $('#lista-materiales').html(data);
+                asignarEventosEliminar(); // Reasignar eventos después de actualizar la lista
+            });
+        }
+
+        // Agregar materiales
+        $(document).on('submit', '#form-agregar-material', function(e) {
+            e.preventDefault();
+
+            const nombreMaterial = $('#nombre_material').val().trim();
+            const areaId = $('#area_id').val();
+
+            if (!nombreMaterial) {
+                alert("El nombre del material no puede estar vacío");
+                return;
+            }
+
+            if (!areaId) {
+                alert("Error: No se pudo identificar el área seleccionada.");
+                return;
+            }
+
+            $.post(`/materiales/agregar/${areaId}`, { nombre_material: nombreMaterial })
+                .done(function() {
+                    console.log("Material agregado correctamente");
+                    cargarMateriales(areaId); // Recargar la lista de materiales
+                    $('#nombre_material').val(''); // Limpiar el campo de entrada
+                })
+                .fail(function(xhr, status, error) {
+                    alert("Error al agregar el material: " + error);
+                    console.error(xhr.responseText);
+                });
+        });
+
+        // Mostrar formulario de asignación de ítems
+        // Mostrar formulario de asignación de ítems (handler delegado)
+        $(document).on('click', '.btn-asignar-items', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const materialId = $(this).data('material-id');
+            const materialNombre = $(this).data('material-nombre');
+
+            console.log('[CLICK] btn-asignar-items', { materialId, materialNombre });
+
+            verAsignacionItems(materialId, materialNombre);
+        });
+
+
+        
+        
+        // Eliminar materiales (esta función se llama después de cargar materiales)
+        function asignarEventosEliminar() {
+            $('.btn-eliminar-material').off('click').on('click', function() {
+                const materialId = $(this).data('material-id');
+                const areaId = $('#area_id').val();
+
+                if (!confirm('¿Estás seguro de eliminar este material?')) {
+                    return;
+                }
+
+                $.post(`/materiales/eliminar/${materialId}`)
+                    .done(function() {
+                        console.log("Material eliminado correctamente");
+                        cargarMateriales(areaId); // Recargar la lista después de eliminar
+                    })
+                    .fail(function(xhr, status, error) {
+                        alert("Error al eliminar el material: " + error);
+                        console.error(xhr.responseText);
+                    });
+            });
+        }
+    });
+
+    
+    // Volver a la lista de Áreas
+    function volverAreas() {
+        $('#seccion-materiales').addClass('hidden');
+        $('#seccion-areas').removeClass('hidden');
+    }
+    
+    // Volver a la lista de Materiales
+    function volverMateriales() {
+        $('#seccion-asignacion').addClass('hidden');
+        $('#seccion-materiales').removeClass('hidden');
+    }
+    
+    // Mostrar la asignación de ítems al hacer clic en "Asignar Ítems"
+    function verAsignacionItems(materialId, materialNombre) {
+        $('#nombre-material-seleccionado').text(materialNombre);
+        $('#seccion-materiales').addClass('hidden');
+        $('#seccion-asignacion').removeClass('hidden');
+    
+        // Llamada AJAX para cargar el formulario de asignación
+        $.get('/asignar_items/' + materialId, function(data) {
+            $('#form-asignar-items').html(data);
+        });
+    }
+</script>
+    
+
+
+
+</body>
+</html>

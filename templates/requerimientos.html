@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <title>Requerimientos — Próximo retiro</title>
+
+  <!-- jQuery + DataTables -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+  <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+
+  <style>
+    body{font-family:Arial, sans-serif; margin:20px; background:#f6f7f9;}
+    h1{margin:0 0 6px 0}
+    .sub{color:#666; margin:0 0 16px 0}
+    nav a{display:inline-block; margin-right:10px; text-decoration:none; color:#0366d6}
+    .toolbar{display:flex; gap:8px; margin:12px 0 16px 0; flex-wrap:wrap}
+    .btn{display:inline-block; padding:8px 12px; border-radius:6px; border:1px solid #d0d7de; background:#fff; cursor:pointer; text-decoration:none; color:#111}
+    .btn:hover{background:#f3f4f6}
+    .btn-primary{background:#0d6efd; color:#fff; border-color:#0d6efd}
+    .btn-primary:hover{background:#0b5ed7}
+    .cards{display:flex; gap:12px; flex-wrap:wrap; margin:8px 0 16px}
+    .card{background:#fff; border:1px solid #e5e7eb; border-radius:10px; padding:12px 14px; min-width:160px; box-shadow:0 1px 2px rgba(0,0,0,0.04)}
+    .card h3{margin:0 0 6px 0; font-size:14px; color:#555}
+    .card .val{font-size:20px; font-weight:700}
+    table{width:100%}
+    .pill{display:inline-block; padding:3px 8px; border-radius:999px; font-size:12px; font-weight:700; color:#fff}
+    .pill.rojo{background:#dc2626}
+    .pill.amarillo{background:#f59e0b}
+    .pill.verde{background:#16a34a}
+    /* Colorear filas por prioridad (suave) */
+    tr.prio-rojo td{background: #fff1f2}
+    tr.prio-amarillo td{background:#fffbeb}
+    tr.prio-verde td{background:#f0fdf4}
+    /* Ocultar columna de prioridad numérica (para orden) */
+    th.prio, td.prio{display:none;}
+    .legend{margin-top:6px; color:#666; font-size:14px}
+    .legend span{display:inline-block; margin-right:12px}
+  </style>
+</head>
+<body>
+
+  <h1>Requerimientos para el próximo retiro</h1>
+  <p class="sub">Listado ordenado por prioridad (Rojo &gt; Amarillo &gt; Verde) y por faltante descendente.</p>
+
+  <nav>
+    <a href="{{ url_for('index') }}">← Inventario</a>
+    <a href="{{ url_for('areas') }}">Solicitudes</a>
+    <!-- <a href="{{ url_for('actividades') }}">Actividades</a> -->
+  </nav>
+
+  <div class="toolbar">
+    <button class="btn" onclick="location.reload()">↻ Actualizar</button>
+    <button id="btnExport" class="btn">⤓ Exportar CSV</button>
+    <a class="btn btn-primary" href="{{ url_for('areas') }}">Asignar más ítems</a>
+  </div>
+
+  <!-- Tarjetas de resumen (se llenan en el cliente) -->
+  <div class="cards">
+    <div class="card"><h3>Total ítems con requerimiento</h3><div class="val" id="kpiTotal">—</div></div>
+    <div class="card"><h3>Faltante total (unidades)</h3><div class="val" id="kpiFaltante">—</div></div>
+    <div class="card"><h3>Rojo / Amarillo / Verde</h3><div class="val" id="kpiRAV">—</div></div>
+  </div>
+
+  <table id="reqTabla" class="display">
+    <thead>
+      <tr>
+        <th>Ítem</th>
+        <th>Categoría</th>
+        <th>Stock</th>
+        <th>Estimado</th>
+        <th>Faltante</th>
+        <th>Semáforo</th>
+        <th class="prio">PrioNum</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for r in requerimientos %}
+      {% set prio = 0 if r.semaforo == 'ROJO' else (1 if r.semaforo == 'AMARILLO' else 2) %}
+      <tr class="prio-{{ 'rojo' if r.semaforo=='ROJO' else ('amarillo' if r.semaforo=='AMARILLO' else 'verde') }}">
+        <td>{{ r.nombre }}</td>
+        <td>{{ r.categoria }}</td>
+        <td>{{ r.stock }}</td>
+        <td>{{ r.estimado }}</td>
+        <td>{{ r.faltante }}</td>
+        <td>
+          {% if r.semaforo == 'ROJO' %}
+            <span class="pill rojo">ROJO</span>
+          {% elif r.semaforo == 'AMARILLO' %}
+            <span class="pill amarillo">AMARILLO</span>
+          {% else %}
+            <span class="pill verde">VERDE</span>
+          {% endif %}
+        </td>
+        <td class="prio">{{ prio }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+
+  <div class="legend">
+    <span><span class="pill rojo">ROJO</span> sin cobertura</span>
+    <span><span class="pill amarillo">AMARILLO</span> cobertura parcial</span>
+    <span><span class="pill verde">VERDE</span> cobertura completa</span>
+  </div>
+
+  <script>
+    $(function(){
+      // DataTable con orden por prioridad (col 6 oculta) y luego faltante (col 4) desc
+      const dt = $('#reqTabla').DataTable({
+        paging: true,
+        searching: true,
+        ordering: true,
+        order: [[6, 'asc'], [4, 'desc']], // prioridad numérica, luego faltante
+        language: {
+          search: "Buscar:",
+          lengthMenu: "Mostrar _MENU_ registros",
+          info: "Mostrando _START_ a _END_ de _TOTAL_",
+          paginate: { first:"Primero", last:"Último", next:"Siguiente", previous:"Anterior" }
+        },
+        columnDefs: [
+          { targets: 6, visible: false } // ocultar la col de prioridad numérica
+        ]
+      });
+
+      // KPIs (cliente)
+      actualizarKPIs();
+
+      // Exportar CSV (cliente)
+      $('#btnExport').on('click', function(){
+        const csv = tablaA_CSV();
+        descargarTexto(csv, 'requerimientos.csv');
+      });
+
+      function actualizarKPIs(){
+        let total=0, faltanteTotal=0, r=0, a=0, v=0;
+        $('#reqTabla tbody tr').each(function(){
+          const tds = $(this).find('td');
+          if (tds.length === 0) return;
+          const faltante = parseInt($(tds[4]).text() || '0', 10);
+          const pill = $(tds[5]).text().trim();
+          if (faltante>0 || pill.length>0){ total++; }
+          faltanteTotal += isNaN(faltante) ? 0 : faltante;
+          if (pill === 'ROJO') r++;
+          else if (pill === 'AMARILLO') a++;
+          else if (pill === 'VERDE') v++;
+        });
+        $('#kpiTotal').text(total);
+        $('#kpiFaltante').text(faltanteTotal);
+        $('#kpiRAV').text(`${r} / ${a} / ${v}`);
+      }
+
+      function tablaA_CSV(){
+        let filas = [];
+        // encabezados
+        let headers = [];
+        $('#reqTabla thead th').each(function(i, th){
+          if ($(th).hasClass('prio')) return; // omitimos prioridad numérica
+          headers.push($(th).text().trim());
+        });
+        filas.push(headers.join(','));
+
+        // datos
+        $('#reqTabla tbody tr').each(function(){
+          let cols = [];
+          $(this).find('td').each(function(i, td){
+            if ($('#reqTabla thead th').eq(i).hasClass('prio')) return; // saltar prio
+            let txt = $(td).text().trim().replace(/\s+/g,' ');
+            // escapar comas y comillas
+            if (txt.includes(',') || txt.includes('"')) {
+              txt = '"' + txt.replace(/"/g,'""') + '"';
+            }
+            cols.push(txt);
+          });
+          if (cols.length) filas.push(cols.join(','));
+        });
+        return filas.join('\n');
+      }
+
+      function descargarTexto(contenido, nombreArchivo){
+        const blob = new Blob([contenido], {type:'text/csv;charset=utf-8;'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = nombreArchivo;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
+    });
+  </script>
+</body>
+</html>
