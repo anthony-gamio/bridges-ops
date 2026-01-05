@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Gestión de Áreas y Materiales</title>
+    <title>Gestión de Campañas</title>
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
@@ -28,21 +28,21 @@
 </head>
 <body>
 
-    <h1>Gestión de Áreas, Materiales e Ítems</h1>
+    <h1>Gestión de Campañas</h1>
     <nav>
         <a href="{{ url_for('index') }}">Inventario</a>
         <!--<a href="{{ url_for('actividades') }}">Actividades</a>-->
-        <a href="{{ url_for('areas') }}">Solicitudes</a>
+        <a href="{{ url_for('areas') }}">Campañas</a>
         <a href="{{ url_for('requerimientos') }}">Consolidado</a>
     </nav>
     
     <!-- SECCIÓN 1: ÁREAS -->
     <div class="section" id="seccion-areas">
-        <h2>Áreas Responsables</h2>
+        <h2>Campañas</h2>
 
         <!-- Formulario para agregar un área -->
         <form action="{{ url_for('agregar_area') }}" method="post">
-            <input type="text" name="nombre_area" placeholder="Nombre del Área" required>
+            <input type="text" name="nombre_area" placeholder="YYYY-MM-DD | Distrito/Zona | Responsable | Nombre" required>
             <button type="submit">Agregar Área</button>
         </form>
 
@@ -50,7 +50,7 @@
         <table id="tabla-areas" class="display">
             <thead>
                 <tr>
-                    <th>Área</th>
+                    <th>Campaña</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -59,7 +59,7 @@
                 <tr data-area-id="{{ area.id }}">
                     <td>{{ area.nombre }}</td>
                     <td>
-                        <button class="btn-ver-materiales">Ver Materiales</button>
+                        <button class="btn-ver-materiales">Ver Actividades</button>
                         <form action="{{ url_for('eliminar_area', area_id=area.id) }}" method="post" style="display:inline;">
                             <button type="submit" onclick="return confirm('¿Estás seguro de eliminar esta área?');">Eliminar</button>
                         </form>
@@ -72,14 +72,14 @@
 
     <!-- SECCIÓN 2: MATERIALES (Se muestra al seleccionar un área) -->
     <div class="section hidden" id="seccion-materiales">
-        <h2>Materiales de <span id="nombre-area-seleccionada"></span></h2>
+        <h2>Actividades de <span id="nombre-area-seleccionada"></span></h2>
         <button onclick="volverAreas()">Volver a Áreas</button>
         
         <!-- Formulario para agregar material -->
         <form id="form-agregar-material">
             <input type="text" id="nombre_material" placeholder="Nombre del Material" required>
             <input type="hidden" id="area_id">
-            <button type="submit">Agregar Material</button>
+            <button type="submit">Agregar Actividad</button>
         </form>
 
         <!-- Lista de Materiales -->

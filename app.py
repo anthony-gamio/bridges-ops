@@ -43,7 +43,12 @@ class Area(Base):
     __tablename__ = 'areas'
     id = Column(Integer, primary_key=True)
     nombre = Column(String, nullable=False, unique=True)
-    materiales = relationship('Material', backref='area', cascade="all, delete-orphan")
+
+    materiales = relationship(
+        'Material',
+        backref='area',
+        cascade="all, delete-orphan"
+    )
 
 class Material(Base):
     __tablename__ = 'materiales'
