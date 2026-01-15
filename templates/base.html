@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Gestión Logistica{% endblock %}</title>
+
+  <!-- DataTables CSS -->
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <!-- DataTables JS -->
+  <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      padding: 20px;
+      background-color: #f4f4f4;
+    }
+    nav {
+      background-color: #7ED34E;
+      overflow: hidden;
+    }
+    nav .right { float: right; }
+    nav a {
+      float: left;
+      display: block;
+      color: white;
+      text-align: center;
+      padding: 14px 20px;
+      text-decoration: none;
+    }
+    nav a:hover { background-color: #218838; }
+    .logo-img {
+      height: 60px;
+      margin-right: 10px;
+      vertical-align: middle;
+    }
+    h2 { margin-top: 20px; }
+    h1 { color: #333; }
+
+    form {
+      background: white;
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 5px;
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    }
+    input, select {
+      margin-bottom: 10px;
+      padding: 8px;
+      width: 100%;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      background-color: #7ED34E;
+      color: white;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover { background-color: #218838; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+    th { background-color: #f4f4f4; }
+  </style>
+
+  {% block extra_head %}{% endblock %}
+</head>
+
+<body>
+  <h1>
+    <img src="{{ url_for('static', filename='logo.jpg') }}"
+         alt="Logo Bridges"
+         class="logo-img">
+    Bridges
+  </h1>
+
+  <nav>
+    <a href="{{ url_for('index') }}">Inventario</a>
+    <a href="{{ url_for('areas') }}">Solicitudes</a>
+    <a href="{{ url_for('requerimientos') }}">Consolidado</a>
+    {% block nav_extra %}{% endblock %}
+  </nav>
+
+  <div class="container">
+    {% block content %}{% endblock %}
+  </div>
+
+  {% block scripts %}{% endblock %}
+</body>
+</html>

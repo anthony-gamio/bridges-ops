@@ -1,4 +1,6 @@
-<form action="{{ url_for('asignar_items', material_id=material.id) }}" method="post">
+<form class="js-asignar-item" action="{{ url_for('asignar_items', material_id=material.id) }}" method="post">
+    <input type="hidden" name="material_id" value="{{ material.id }}">
+
     <label for="item_id">Seleccionar Ítem del Inventario:</label>
     <select name="item_id" required>
         {% for item in inventario %}
@@ -13,10 +15,14 @@
 </form>
 
 <h3>Ítems Asignados:</h3>
-<ul>
+<ul class="simple-list">
     {% for asignacion in asignaciones %}
-    <li>{{ asignacion.item.nombre }} - {{ asignacion.cantidad_asignada }} unidades
-        <form action="{{ url_for('eliminar_asignacion', asignacion_id=asignacion.id) }}" method="post" style="display:inline;">
+    <li>
+        <span>{{ asignacion.item.nombre }} - {{ asignacion.cantidad_asignada }} unidades</span>
+        <form class="js-eliminar-asignacion"
+              action="{{ url_for('eliminar_asignacion', asignacion_id=asignacion.id) }}"
+              method="post" style="display:inline;">
+            <input type="hidden" name="material_id" value="{{ material.id }}">
             <button type="submit" onclick="return confirm('¿Eliminar esta asignación?');">Eliminar</button>
         </form>
     </li>

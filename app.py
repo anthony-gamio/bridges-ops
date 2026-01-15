@@ -1,5 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify
 import os
+from dotenv import load_dotenv
+load_dotenv()
 import pandas as pd
 from sqlalchemy import create_engine, Column, Integer, String, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
@@ -8,6 +10,7 @@ from urllib.parse import quote_plus
 import psycopg2
 
 app = Flask(__name__)
+
 
 # Configuración de la base de datos
 DATABASE_URL = os.getenv("DATABASE_URL")
