@@ -1,0 +1,12 @@
+<div class="distribucion-box">
+  <strong>Distribución de {{ item.nombre }}</strong>
+  {% if rows %}
+    <ul>
+      {% for st, a in rows %}
+        <li>{{ a.nombre }}: {{ st.cantidad }}</li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <div>- Sin stock en almacenes -</div>
+  {% endif %}
+</div>

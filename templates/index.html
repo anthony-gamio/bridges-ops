@@ -1,81 +1,138 @@
 {% extends "base.html" %}
-
 {% block title %}Inventario | Bridges{% endblock %}
 
 {% block content %}
-  <h2>Movimientos (Kardex)</h2>
-  <form action="/agregar" method="post">
-    <label for="nombre">Nombre:</label>
-    <input type="text" id="nombre" name="nombre" required>
 
-    <label for="cantidad">Cantidad:</label>
-    <input type="number" id="cantidad" name="cantidad" required>
+<!-- =========================
+     FILTRO DE VISUALIZACIÓN
+     ========================= -->
 
-    <label for="categoria">Categoría:</label>
-    <select id="categoria" name="categoria" required>
-      <option value="Activo">Activo</option>
-      <option value="Consumible">Consumible</option>
-    </select>
+<!-- <h2>Ver stock en</h2>
+<form method="get" action="{{ url_for('index') }}">
+  <select name="almacen_id" onchange="this.form.submit()">
+    <option value="all" {% if view_almacen == 'all' %}selected{% endif %}>
+      Todos (Consolidado)
+    </option>
+    {% for a in almacenes %}
+      <option value="{{ a.id }}"
+        {% if view_almacen != 'all' and almacen_id == a.id %}selected{% endif %}>
+        {{ a.nombre }}
+      </option>
+    {% endfor %}
+  </select>
+</form> -->
 
-    <button type="submit">Agregar</button>
-  </form>
+<!-- =========================
+     MOVIMIENTOS (KARDEX)
+     ========================= -->
+<h2>Movimientos (Kardex)</h2>
+<form action="{{ url_for('agregar') }}" method="post">
 
-  <h2>Inventario Actual</h2>
-  <table id="inventarioTabla">
-    <thead>
-      <tr>
-        <th>Nombre</th>
-        <th>Cantidad</th>
-        <th>Categoría</th>
-        <th>Consumo Estimado</th>
-        {% if modo_admin %}<th>Acciones</th>{% endif %}
-      </tr>
-    </thead>
-    <tbody>
-      {% for item in inventario %}
-      <tr>
-        <td>{{ item.nombre }}</td>
-        <td>{{ item.cantidad }}</td>
-        <td>{{ item.categoria }}</td>
-        <td>{{ item.consumo_estimado }}</td>
-        {% if modo_admin %}
-        <td>
-          <form action="{{ url_for('eliminar_item_inventario', item_id=item.id) }}"
-                method="post" style="display:inline;">
-            <button type="submit"
-                    onclick="return confirm('¿Eliminar &quot;{{ item.nombre }}&quot;? Esta acción no se puede deshacer.');">
-              Eliminar
-            </button>
-          </form>
-        </td>
+  <label>Nombre:</label>
+  <input type="text" name="nombre" required>
+
+  <label>Cantidad:</label>
+  <input type="number" name="cantidad" required>
+
+  <!-- <label>Categoría:</label>
+  <select name="categoria" required>
+    <option value="Activo">Activo</option>
+    <option value="Consumible">Consumible</option>
+  </select> -->
+
+  <label>Ubicación:</label>
+  <select name="almacen_movimiento_id" required>
+    {% for a in almacenes %}
+      <option value="{{ a.id }}">{{ a.nombre }}</option>
+    {% endfor %}
+  </select>
+
+  <button type="submit">Registrar movimiento</button>
+</form>
+
+<!-- =========================
+     INVENTARIO
+     ========================= -->
+<h2>Inventario</h2>
+
+<table id="inventarioTabla">
+  <thead>
+    <tr>
+      <th>Nombre</th>
+      <th>Cantidad</th>
+      <!-- <th>Categoría</th> -->
+      <th>Solicitado</th>
+      <th>Detalle</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in inventario %}
+    <tr>
+      <td>{{ item.nombre }}</td>
+
+      <!-- cantidad consolidada o por almacén -->
+      <td>
+        {% if view_almacen == 'all' %}
+          {{ total_map.get(item.id, 0) }}
+        {% else %}
+          {{ stock_map.get(item.id, 0) }}
         {% endif %}
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+      </td>
+
+      <!-- <td>{{ item.categoria }}</td> -->
+      <td>{{ item.consumo_estimado }}</td>
+
+      <td>
+        <button type="button"
+                class="btn-detalle"
+                data-item-id="{{ item.id }}">
+          Ver
+        </button>
+      </td>
+    </tr>
+
+    {% endfor %}
+  </tbody>
+</table>
+
 {% endblock %}
 
 {% block scripts %}
 <script>
-  /* global $ */
-  $(document).ready(function() {
-    $('#inventarioTabla').DataTable({
-      paging: true,
-      searching: true,
-      ordering: true,
-      order: [[1, "desc"]],
-      language: {
-        search: "Buscar:",
-        lengthMenu: "Mostrar _MENU_ registros por página",
-        info: "Mostrando _START_ a _END_ de _TOTAL_ registros",
-        paginate: {
-          first: "Primero",
-          last: "Último",
-          next: "Siguiente",
-          previous: "Anterior"
-        }
-      }
-    });
+$(document).on('click', '.btn-detalle', function() {
+  const id = $(this).data('item-id');
+  const $mainRow = $(this).closest('tr');
+
+  // ¿ya existe la fila detalle justo debajo?
+  const $next = $mainRow.next();
+  const isDetalle = $next.hasClass('dt-detalle') && $next.data('item-id') == id;
+
+  // Cierra cualquier otro detalle abierto
+  $('.dt-detalle').not($next).remove();
+
+  if (isDetalle) {
+    // toggle: si ya está, lo quitamos
+    $next.remove();
+    return;
+  }
+
+  // Creamos fila detalle nueva debajo
+  const colCount = $mainRow.children('td').length; // cuenta real (incluye Acciones si aplica)
+  const $detalleRow = $(`
+    <tr class="dt-detalle" data-item-id="${id}">
+      <td colspan="${colCount}">
+        <div class="detalle-contenido">Cargando...</div>
+      </td>
+    </tr>
+  `);
+
+  $mainRow.after($detalleRow);
+
+  $.get('/inventario/' + id + '/distribucion', function(html) {
+    $detalleRow.find('.detalle-contenido').html(html);
+  }).fail(function() {
+    $detalleRow.find('.detalle-contenido').html('Error al cargar distribución.');
   });
+});
 </script>
 {% endblock %}
